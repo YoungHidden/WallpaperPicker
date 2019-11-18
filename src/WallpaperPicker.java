@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Random;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -32,6 +33,8 @@ public class WallpaperPicker {
 	{
 		ChromeOptions options = new ChromeOptions();				
 		//options.addArguments("headless");							////Per nascondere pagina
+		
+		System.setProperty("webdriver.chrome.driver", "D:\\chromedriver.exe");
 		
 		HashMap<String, Object> chromePrefs = new HashMap<String, Object>();			//Per non mostrare notifica
 		chromePrefs.put("profile.default_content_settings.popups", 0);
@@ -85,13 +88,20 @@ public class WallpaperPicker {
 	
 	private void ImpostaSfondo() throws IOException, InterruptedException
 	{
-		Thread.sleep(1000);
+		Thread.sleep(6000);
 		Object[] el = ElencoFile();
 		System.out.println(el.length);
 		for (int i = 0; i < el.length; i++) {
-			if(((Path) el[i]).toString().contains(".jpg") || ((Path) el[i]).toString().contains(".png")) {
+			
+			String ext = "." + ((Path) el[i]).toString().substring(((Path) el[i]).toString().lastIndexOf('.')+1);  //Estrae l'estensione del file
+			System.out.println(ext);
+			
+			if(ext.equals(".crdownload")) {
+				
+			}else {
 				System.out.println(((Path) el[i]).toString());
 				User32.INSTANCE.SystemParametersInfo(0x0014, 0, ((Path) el[i]).toString() , 1);
+				Thread.sleep(3000);
 			}
 		}
 		Thread.sleep(2000);
@@ -120,5 +130,5 @@ public class WallpaperPicker {
 	
 	private WebDriver driver;
 	private String RicercaImmagine;
-	private String downloadFilepath = "C:\\Users\\" + System.getProperty("user.name") + "\\Downloads\\sfondo";
+	private String downloadFilepath = "C:\\Users\\" + System.getProperty("user.name") + "\\Desktop\\sfondo";
 }
