@@ -3,15 +3,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.Time;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
+import javax.swing.JOptionPane;
+
 import org.openqa.selenium.By;
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -22,19 +20,16 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
-import com.sun.jna.platform.win32.WinDef.HWND;
-import com.sun.jna.platform.win32.WinDef.PVOID;
 import com.sun.jna.win32.W32APIOptions;
-import net.bytebuddy.asm.Advice.This;
 
 public class WallpaperPicker {
 	
 	public WallpaperPicker(String RicercaImmagine) throws InterruptedException 
 	{
 		ChromeOptions options = new ChromeOptions();				
-		//options.addArguments("headless");							////Per nascondere pagina
+		options.addArguments("headless");							////Per nascondere pagina
 		
-		System.setProperty("webdriver.chrome.driver", "D:\\chromedriver.exe");
+		//System.setProperty("webdriver.chrome.driver", "D:\\chromedriver.exe");
 		
 		HashMap<String, Object> chromePrefs = new HashMap<String, Object>();			//Per non mostrare notifica
 		chromePrefs.put("profile.default_content_settings.popups", 0);
@@ -48,7 +43,7 @@ public class WallpaperPicker {
 		
 		this.driver= new ChromeDriver(options);								//Imposta Driver e url
 		this.RicercaImmagine=RicercaImmagine;
-		driver.get("https://unsplash.com/s/photos/" + RicercaImmagine);
+		driver.get("https://unsplash.com/s/photos/" + this.RicercaImmagine);
 		
 		Random r = new Random();
 		int scrollSize = r.nextInt(10000);
@@ -65,7 +60,13 @@ public class WallpaperPicker {
 		Random r = new Random();
 		int numeroImmagine =0;
 		
-		numeroImmagine=r.nextInt(immagine.size()-1);						//seleziona immagine in modo random
+		if(immagine.size()==0)												//Controlla se ci sono foto o meno
+		{
+			JOptionPane.showMessageDialog(null, "Foto non trovate");
+			return;
+		}
+		
+		numeroImmagine=r.nextInt(immagine.size());						//seleziona immagine in modo random
 		immagine.get(numeroImmagine).click();
 		System.out.println("Immagine selezionata: " + numeroImmagine);
 		System.out.println("Immagini Trovate" + immagine.size());
@@ -74,7 +75,7 @@ public class WallpaperPicker {
 		WebElement download = driver.findElement(By.cssSelector("div[class='_13Q- _27vvN _2iWc-'"));		//Scarica immagine
 		download.click();
 		
-		while(!new File(this.downloadFilepath).exists());
+		while(!new File(this.downloadFilepath).exists());						//Imposta lo sfondo
 		ImpostaSfondo();
 		
 		
@@ -91,14 +92,16 @@ public class WallpaperPicker {
 		Thread.sleep(6000);
 		Object[] el = ElencoFile();
 		System.out.println(el.length);
-		for (int i = 0; i < el.length; i++) {
+		for (int i = 0; i < el.length; i++) 
+		{
 			
 			String ext = "." + ((Path) el[i]).toString().substring(((Path) el[i]).toString().lastIndexOf('.')+1);  //Estrae l'estensione del file
 			System.out.println(ext);
 			
-			if(ext.equals(".crdownload")) {
-				
-			}else {
+			if(ext.equals(".crdownload")) 
+			{}
+			else 
+			{
 				System.out.println(((Path) el[i]).toString());
 				User32.INSTANCE.SystemParametersInfo(0x0014, 0, ((Path) el[i]).toString() , 1);
 				Thread.sleep(3000);
