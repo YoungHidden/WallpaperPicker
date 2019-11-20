@@ -26,6 +26,7 @@ public class MainWindow {
 					MainWindow window = new MainWindow();
 					window.frame.setVisible(true);
 					window.frame.setTitle("WallpaperPicker");
+					window.frame.setResizable(false);
 				} 
 				catch (Exception e)
 				{
